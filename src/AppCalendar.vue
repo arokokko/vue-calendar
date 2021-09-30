@@ -34,10 +34,12 @@
 <script>
 	import moment from 'moment';
     import HeaderCalendar from './components/Header.vue';
+	import WeekCalendar from './components/Week.vue';
 
 	export default {
         components: {
 			HeaderCalendar,
+			WeekCalendar
 		},
 		data () {
 			return {
@@ -45,7 +47,12 @@
 			}
 		},
 		props: {
-			
+			allEvents: {
+				type: Array,
+				default: function () {
+					return [];
+				}
+			},
 			firstDay: {
 				type: Number || String,
 				validator (val) {
@@ -56,13 +63,89 @@
 			}
 		},
 		
-		
+		computed: {
+			Weeks () {
+				let monthMomentObject = this.getMonthViewStartDate(this.currentMonth, this.firstDay);
+				let weeks = [], week = [];
+
+				let daysInCurrentMonth = this.currentMonth.daysInMonth();
+
+				for ( let weekIndex=0; weekIndex < 5; weekIndex++) {
+
+					week = [];
+					for (let dayIndex=0; dayIndex < 7; dayIndex++) {
+
+						week.push(this.getDayObject(monthMomentObject, dayIndex));
+
+						monthMomentObject.add(1, 'day');
+					}
+
+					weeks.push(week);
+				}
+
+				let diff = daysInCurrentMonth-weeks[4][6].date.format('D');
+
+
+				if(diff > 0 && diff < 3){
+					week = [];
+					for (let dayIndex=0; dayIndex < 7; dayIndex++) {
+
+						week.push(this.getDayObject(monthMomentObject, dayIndex));
+
+						monthMomentObject.add(1, 'day');
+					}
+
+					weeks.push(week);
+				}
+
+				return weeks;
+			},
+			events: function () {
+				return this.allEvents;
+			}
+		},
 		methods: {
-			
+			getEvents (date) {
+				return this.events.filter(event => {
+					return date.isSame(event.date, 'day') ? event : null;
+				});
+			},
+
+			getMonthViewStartDate (date, firstDay) {
+				firstDay = parseInt(firstDay);
+
+				let start = moment(date);
+				let startOfMonth = moment(start.startOf('month'));
+
+				start.subtract(startOfMonth.day(), 'days');
+
+				if (startOfMonth.day() < firstDay) {
+					start.subtract(7, 'days');
+				}
+
+				start.add(firstDay, 'days');
+
+				return start;
+			},
+
+			getDayObject(monthMomentObject, dayIndex){
+				return {
+					isToday: monthMomentObject.isSame(moment(), 'day'),
+					isFuture: monthMomentObject.isAfter(),
+					weekDay: dayIndex,
+					isWeekEnd: (dayIndex == 5 || dayIndex == 6),
+					date: moment(monthMomentObject),
+					events: this.getEvents(monthMomentObject)
+				};
+			},
 			changeMonth(e) {
 				this.currentMonth = e.locale('ru').startOf('month');
 			},
-			
+			weekDayName (weekday, firstDay) {
+				firstDay = parseInt(firstDay);
+				const localMoment = moment().locale('ru');
+				return localMoment.localeData().weekdays()[(weekday + firstDay) % 7].toUpperCase();
+			}
 		},
 		
 	}

@@ -4,7 +4,6 @@
             <h1>Calendar vue</h1>
             <app-calendar
                     :first-day="1"
-                    
             ></app-calendar>
         </div>
     </div>
@@ -15,7 +14,8 @@
     export default {
 		components: {
             AppCalendar
-        }
+        },
+        
         
     }
 </script>
