@@ -1,4 +1,4 @@
-# vue-calendar
+# Calendar App Vue3 Moment.js
 
 ## Project setup
 ```
