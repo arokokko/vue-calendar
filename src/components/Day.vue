@@ -9,14 +9,21 @@
             </div>
         </div>
         <div class="event-box">
-            
+            <event-card
+                    :event="event"
+                    :key="event.id"
+                    :day-date="day.date"
+                    v-for="event in day.events">
+            </event-card>
         </div>
     </div>
 </template>
 <script>
-    
+    import EventCard from './EventCard.vue';
     export default {
-        
+        components: {
+            EventCard
+        },
         props:{
             day: {
                 type: Object
@@ -67,7 +74,7 @@
     }
 
     .today {
-        border: 2px solid #929292;
+        border: 2px solid #727171;
         background: #fff;
     }
 
