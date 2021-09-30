@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <div class="container">
-            <h1>Calendar vue</h1>
+            <h1>Calendar vue3 moment.js</h1>
             <app-calendar
                     :first-day="1"
                     :all-events="events"
